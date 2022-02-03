@@ -1,6 +1,8 @@
 import numpy as np
 import random
+import math
 
+task_total = 10
 expired = []
 
 
@@ -24,6 +26,7 @@ class Core:
 
     def do_task(self):
         print(f'doing task {self.task.ID} by core {self.ID}')
+        print(f'Perform time: {self.perform_time}')
         self.perform_time -= 1
         if self.perform_time == 0:
             print(f'task {self.task.ID} is done')
@@ -33,7 +36,7 @@ class Core:
             self.perform_time = -1
             self.server.manage()
 
-    def set_server(self, server: Server):
+    def set_server(self, server):
         self.server = server
 
 
@@ -44,11 +47,13 @@ class Server:
         self.Queue = []
 
     def check_expired(self, time):
+        to_be_popped = []
         for i in range(len(self.Queue)):
             if self.Queue[i].deadline >= time:
-                expired.append(self.Queue.pop(i))
-                print(f'Time {self.time}: task {self.Queue[i].ID} with deadline {self.Queue[i].deadline} expired')
-
+                to_be_popped.append(self.Queue[i])
+                print(f'Time {time}: task {self.Queue[i].ID} with deadline {self.Queue[i].deadline} expired')
+        for item in to_be_popped:
+            expired.append(self.Queue.remove(item))
 
     def manage(self):
         for core in self.Cores:
@@ -58,7 +63,7 @@ class Server:
                     break
                 found_type_1 = False
                 for i in range(len(self.Queue)):
-                    if self.Queue[i].tast_type == 1:
+                    if self.Queue[i].task_type == 1:
                         print(f'Task rank {self.Queue[i].task_type} out of server {self.ID} Queue')
                         task = self.Queue.pop(i)
                         core.task = task
@@ -68,7 +73,7 @@ class Server:
                     print(f'Task rank 2 out of server {self.ID} Queue')
                     task = self.Queue.pop(0)
                     core.task = task
-                time = np.random.exponential(core.alpha)
+                time = math.floor(np.random.exponential(core.alpha))
                 core.perform_time = time
                 core.status = 'busy'
                 core.do_task()
@@ -88,18 +93,18 @@ class Scheduler:
 
     def generate_tasks(self):
         num_tasks_generated = np.random.poisson(self.Lambda)
-        if num_tasks_generated + self.total > 1000000:
-            num_tasks_generated = 1000000 - self.total
+        if num_tasks_generated + self.total > task_total:
+            num_tasks_generated = task_total - self.total
         else:
             self.total += num_tasks_generated
         for i in range(num_tasks_generated):
             types = [1, 2]
             probs = [.1, .9]
             ttype = random.choices(types, probs)[0]
-            deadline = np.random.exponential(self.Alpha)
-            task = Task(ttype, self.time, deadline + self.time)
+            deadline = math.floor(np.random.exponential(self.Alpha))
+            task = Task(self.time + i, ttype, self.time, deadline + self.time)
             self.Queue.append(task)
-        if self.total >= 1000000:
+        if self.total >= task_total:
             print(f'reached total at time {self.time}, enough generation...')
             return True
         else:
@@ -114,7 +119,7 @@ class Scheduler:
                 mini = len(server.Queue)
             elif len(server.Queue) == mini:
                 candid_servers.append(server)
-        chosen_server = random.choices(candid_servers)[0]
+        chosen_server = random.choice(candid_servers)
         print(f'task assigned to server {chosen_server.ID}')
         chosen_server.Queue.append(task)
 
@@ -127,7 +132,7 @@ class Scheduler:
                 break
             for j in range(len(self.Queue)):
                 if self.Queue[j].task_type == 1:
-                    print(f'Task rank {self.Queue[j].task_type} out of sched Queue')
+                    print(f'Task {self.Queue[j].ID} rank {self.Queue[j].task_type} out of sched Queue')
                     task = self.Queue.pop(j)
                     found_type_1 = True
                     break
@@ -137,22 +142,26 @@ class Scheduler:
             self.assign_to_server(task)
 
     def check_expired(self):
+        to_be_popped = []
         for i in range(len(self.Queue)):
             if self.Queue[i].deadline >= self.time:
-                expired.append(self.Queue.pop(i))
+                to_be_popped.append(self.Queue[i])
                 print(f'Time {self.time}: task {self.Queue[i].ID} with deadline {self.Queue[i].deadline} expired')
+        for item in to_be_popped:
+            expired.append(self.Queue.remove(item))
 
     def manage(self):
         while True:
             self.check_expired()
-            if self.total < 1000000:
+            if self.total < task_total:
                 self.generate_tasks()
             self.sched_queue()
             for server in self.Servers:
                 server.check_expired(self.time)
                 server.manage()
-            stop = True
-            if self.total >= 1000000:
+            stop = False
+            if self.total >= task_total:
+                stop = True
                 for server in self.Servers:
                     if len(server.Queue) == 0:
                         for core in server.Cores:
@@ -173,10 +182,11 @@ for i in range(5):
     alphas = input().split()
     cores = []
     for j in range(3):
-        core = Core(i+j, alphas[j])
+        core = Core(i+j, int(alphas[j]))
         cores.append(core)
     server = Server(i, cores)
     for core in server.Cores:
         core.set_server(server)
+    scheduler.Servers.append(server)
 
 scheduler.manage()
