@@ -19,7 +19,7 @@ class Task:
         self.out_sched_q = 0
         self.in_server_q = 0
         self.out_server_q = 0
-        self.status = 0
+        self.status = 'waiting'
 
 
 class Core:
@@ -37,26 +37,26 @@ class Core:
         if self.perform_time == 0:
             print(f'task {self.task.ID} is done')
             print(f'core {self.ID} is idle')
-            self.task.status = 3
+            self.task.status = 'done'
             self.task.done_time = time
             self.status = 'idle'
             dones.append(self.task)
             self.task = None
             self.perform_time = -1
-            self.server.manage()
+            self.server.manage(time)
 
         self.perform_time -= 1
 
         if self.perform_time == 0:
             print(f'task {self.task.ID} is done')
             print(f'core {self.ID} is idle')
-            self.task.status = 3
+            self.task.status = 'done'
             self.task.done_time = time
             self.status = 'idle'
             dones.append(self.task)
             self.task = None
             self.perform_time = -1
-            self.server.manage()
+            self.server.manage(time)
 
     def set_server(self, server):
         self.server = server
@@ -67,6 +67,7 @@ class Server:
         self.ID = ID
         self.Cores = cores
         self.Queue = []
+        self.Queue_lengths = []
 
     def check_expired(self, time):
         to_be_popped = []
@@ -74,9 +75,11 @@ class Server:
             if self.Queue[i].deadline <= time:
                 to_be_popped.append(self.Queue[i])
                 self.Queue[i].out_server_q = time
+                self.Queue[i].status = 'expired'
                 print(f'Time {time}: task {self.Queue[i].ID} with deadline {self.Queue[i].deadline} expired is Server Q')
         for item in to_be_popped:
-            expired.append(self.Queue.remove(item))
+            expired.append(item)
+            self.Queue.remove(item)
 
     def manage(self, real_time):
         for core in self.Cores:
@@ -112,6 +115,7 @@ class Scheduler:
         self.Alpha = Alpha
         self.total = 0
         self.Mio = Mio
+        self.Queue_length = []
 
     def generate_tasks(self):
         num_tasks_generated = np.random.poisson(self.Lambda)
@@ -174,23 +178,27 @@ class Scheduler:
         for i in range(len(self.Queue)):
             if self.Queue[i].deadline <= self.time:
                 to_be_popped.append(self.Queue[i])
+                self.Queue[i].status = 'expired'
                 print(f'Time {self.time}: task {self.Queue[i].ID} with deadline {self.Queue[i].deadline} expired in Sched Q')
                 self.Queue[i].out_sched_q = self.time
         for item in to_be_popped:
-            expired.append(self.Queue.remove(item))
+            expired.append(item)
+            self.Queue.remove(item)
 
     def manage(self):
         while True:
             print(f'### TIME {self.time} ###')
-            t.sleep(3)
+            t.sleep(2)
 
             if self.total < task_total:
                 self.generate_tasks()
             self.check_expired()
             self.sched_queue()
+            self.Queue_length.append(len(self.Queue))
             for server in self.Servers:
                 server.check_expired(self.time)
                 server.manage(self.time)
+                server.Queue_lengths.append(len(server.Queue))
             stop = False
             if self.total >= task_total and len(self.Queue) == 0:
                 stop = True
@@ -226,3 +234,70 @@ print("\n\n")
 print("### STATS ###")
 print(f'{len(expired)} tasks expired')
 print(f'{len(dones)} tasks done')
+print("\n\n")
+print("# Average time spent in system:\n By type of task:\n")
+
+avg_1 = []
+avg_2 = []
+for task in expired:
+    if task.task_type == 1:
+        avg_1.append(task.deadline - task.birth_time + 1)
+    else:
+        avg_2.append(task.deadline - task.birth_time + 1)
+for task in dones:
+    if task.task_type == 1:
+        avg_1.append(task.done_time - task.birth_time + 1)
+    else:
+        avg_2.append(task.done_time - task.birth_time + 1)
+
+
+print(f'Type 1 tasks: {0 if len(avg_1) == 0 else sum(avg_1)/len(avg_1)}\nType 2 tasks: {sum(avg_2)/len(avg_2)}\n')
+print(f'Overall: {(sum(avg_1)+sum(avg_2))/(len(avg_1) + len(avg_2))}')
+print()
+print("# Average time spent in system:\nBy type:\n")
+
+avg_q_1 = []
+avg_q_2 = []
+
+for task in expired:
+    if task.task_type == 1:
+        avg_q_1.append(task.out_sched_q - task.in_sched_q + task.out_server_q - task.in_server_q)
+    else:
+        avg_q_2.append(task.out_sched_q - task.in_sched_q + task.out_server_q - task.in_server_q)
+for task in dones:
+    if task.task_type == 1:
+        avg_q_1.append(task.out_sched_q - task.in_sched_q + task.out_server_q - task.in_server_q)
+    else:
+        avg_q_2.append(task.out_sched_q - task.in_sched_q + task.out_server_q - task.in_server_q)
+
+print(f'Type 1 tasks: {0 if len(avg_q_1) == 0 else sum(avg_q_1)/len(avg_q_1)}\nType 2 tasks: {sum(avg_q_2)/len(avg_q_2)}\n')
+print(f'Overall: {(sum(avg_q_1)+sum(avg_q_2))/(len(avg_q_1) + len(avg_q_2))}')
+
+print()
+print("# Percentage of expired tasks\nBy type:\n")
+
+exp_1 = 0
+exp_2 = 0
+for task in expired:
+    if task.task_type == 1:
+        exp_1 += 1
+    else:
+        exp_2 += 1
+done_1 = 0
+done_2 = 0
+for task in dones:
+    if task.task_type == 1:
+        done_1 += 1
+    else:
+        done_2 += 1
+
+print(f'Type 1 tasks: {0 if exp_1 + done_1 == 0 else (exp_1/(exp_1 + done_1)*100)}%\nType 2 tasks: {(exp_2/(exp_2 + done_2)*100)}%\n')
+print(f'Overall: {(len(expired)/task_total)*100}%')
+
+print()
+print("# Average Queue length:\n")
+print(f'Scheduler: {sum(scheduler.Queue_length)/len(scheduler.Queue_length)}')
+for server in scheduler.Servers:
+    print(f'Server {server.ID}: {sum(server.Queue_lengths)/len(server.Queue_lengths)}')
+
+
