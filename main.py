@@ -1,7 +1,6 @@
 import numpy as np
 import random
 import math
-import time as t
 
 task_total = 1000000
 expired = []
@@ -292,13 +291,13 @@ def stats(scheduler):
 
 
 def inputs():
-    landa, alpha, mio = input().split()
-    scheduler = Scheduler(int(landa), int(alpha), int(mio))
+    landa, alpha, mio = input("Please Enter Lambda, Alpha and Mio: ").split()
+    scheduler = Scheduler(float(landa), 1/float(alpha), float(mio))
     for i in range(5):
-        alphas = input().split()
+        alphas = input("Server's cores' properties: ").split()
         cores = []
         for j in range(3):
-            core = Core(i + j, int(alphas[j]))
+            core = Core(i + j, float(alphas[j]))
             cores.append(core)
         server = Server(i, cores)
         for core in server.Cores:
