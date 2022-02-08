@@ -1,0 +1,175 @@
+### Simulation Done ###
+
+
+
+### STATS ###
+992223 tasks expired
+7714 tasks done
+
+
+
+*** Average time spent in system:
+ By type of task:
+
+Type 1 tasks: 17.02867473258283
+Type 2 tasks: 10.540539699786578
+
+Overall: 11.188381868057688
+
+*** Average time spent in queue:
+By type:
+
+Type 1 tasks: 8.713302752293577
+Type 2 tasks: 9.519139688898814
+
+Overall: 9.438676636628108
+
+*** Percentage of expired tasks
+By type:
+
+Type 1 tasks: 92.47526140779615%
+Type 2 tasks: 99.977668974206%
+
+Overall: 99.22855139873812%
+
+*** Average Queue length:
+
+Scheduler: 137.72555677619096
+Server 0: 10.164386297812843
+Server 1: 10.172815340057925
+Server 2: 10.161250374513132
+Server 3: 10.162109257964646
+Server 4: 10.160271646859083
+
+
+
+######2
+reached total at time 152509, enough generation...
+### Simulation Done ###
+
+
+
+### STATS ###
+1202975 tasks expired
+56 tasks done
+
+
+
+*** Average time spent in system:
+ By type of task:
+
+Type 1 tasks: 1000.1751644055724
+Type 2 tasks: 997.7893823576426
+
+Overall: 998.0288230311604
+
+*** Average time spent in queue:
+By type:
+
+Type 1 tasks: 999.1750484520201
+Type 2 tasks: 996.7893638783582
+
+Overall: 997.0287947692121
+
+*** Percentage of expired tasks
+By type:
+
+Type 1 tasks: 99.98840464476801%
+Type 2 tasks: 99.99611935030532%
+
+Overall: 99.99534509085801%
+
+*** Average Queue length:
+
+Scheduler: 0.0037768015212117237
+Server 0: 1575.4974100059012
+Server 1: 1575.4995606845453
+Server 2: 1575.4955675037702
+Server 3: 1575.5017900465543
+Server 4: 1575.487404104649
+
+#####2 better
+
+### STATS ###
+20107 tasks expired
+75239 tasks done
+
+
+
+*** Average time spent in system:
+ By type of task:
+
+Type 1 tasks: 1.5041675137223012
+Type 2 tasks: 228.50646723113627
+
+Overall: 205.0838944475909
+
+*** Average time spent in queue:
+By type:
+
+Type 1 tasks: 0.05041675137223013
+Type 2 tasks: 227.2586892454507
+
+Overall: 203.81486375936063
+
+*** Percentage of expired tasks
+By type:
+
+Type 1 tasks: 0.11181134376905875%
+Type 2 tasks: 23.501894559573373%
+
+Overall: 21.088456778469993%
+
+*** Average Queue length:
+
+Scheduler: 0.014132165605095542
+Server 0: 802.21775477707
+Server 1: 804.8248407643312
+Server 2: 804.8419585987261
+Server 3: 804.8071257961783
+Server 4: 804.8381767515923
+
+
+### test 3
+### Simulation Done ###
+
+
+
+### STATS ###
+14372 tasks expired
+985628 tasks done
+
+
+
+*** Average time spent in system:
+ By type of task:
+
+Type 1 tasks: 1.0000502008032128
+Type 2 tasks: 1.491138382940915
+
+Overall: 1.442226
+
+*** Average time spent in queue:
+By type:
+
+Type 1 tasks: 0.0
+Type 2 tasks: 0.4910917370057752
+
+Overall: 0.442179
+
+*** Percentage of expired tasks
+By type:
+
+Type 1 tasks: 1.0070281124497993%
+Type 2 tasks: 1.4847845402043536%
+
+Overall: 1.4372%
+
+*** Average Queue length:
+
+Scheduler: 44.226745349069816
+Server 0: 0.0
+Server 1: 0.0
+Server 2: 0.0
+Server 3: 0.0
+Server 4: 0.0
