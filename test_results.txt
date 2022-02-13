@@ -1,3 +1,5 @@
+~~~ Test 1:
+
 ### Simulation Done ###
 
 
@@ -42,53 +44,7 @@ Server 3: 10.162109257964646
 Server 4: 10.160271646859083
 
 
-
-######2
-reached total at time 152509, enough generation...
-### Simulation Done ###
-
-
-
-### STATS ###
-1202975 tasks expired
-56 tasks done
-
-
-
-*** Average time spent in system:
- By type of task:
-
-Type 1 tasks: 1000.1751644055724
-Type 2 tasks: 997.7893823576426
-
-Overall: 998.0288230311604
-
-*** Average time spent in queue:
-By type:
-
-Type 1 tasks: 999.1750484520201
-Type 2 tasks: 996.7893638783582
-
-Overall: 997.0287947692121
-
-*** Percentage of expired tasks
-By type:
-
-Type 1 tasks: 99.98840464476801%
-Type 2 tasks: 99.99611935030532%
-
-Overall: 99.99534509085801%
-
-*** Average Queue length:
-
-Scheduler: 0.0037768015212117237
-Server 0: 1575.4974100059012
-Server 1: 1575.4995606845453
-Server 2: 1575.4955675037702
-Server 3: 1575.5017900465543
-Server 4: 1575.487404104649
-
-#####2 better
+~~~ Test 2:
 
 ### STATS ###
 20107 tasks expired
@@ -130,7 +86,8 @@ Server 3: 804.8071257961783
 Server 4: 804.8381767515923
 
 
-### test 3
+~~~ Test 3:
+
 ### Simulation Done ###
 
 
